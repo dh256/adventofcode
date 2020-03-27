@@ -1,4 +1,4 @@
-# Advent of Code Utility Classes
+# Advent of Code Utility Classes
 
 A bunch of utility classes for Advent of Code problems. As I have worked on Advent of Code problems a number of utility classes have been created that help solve problems.
 
