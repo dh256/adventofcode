@@ -4,4 +4,4 @@ A bunch of utility classes for Advent of Code problems. As I have worked on Adve
 
 - Point2D - 2D point
 - Point3D - 3D point
-
+- Stack - Simple implementation of a Stack (LIFO)

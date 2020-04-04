@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='adventofcode.utils',
-    version='1.1.1',
+    version='2.0.0',
     description='Advent of Code utility classes',
     long_description=long_description,
     long_description_content_type="text/markdown",
