@@ -1,5 +1,4 @@
 from Passwords import Passwords
-from Passwords import Passwords
 import pytest
 
 test_data_p1 = [("test.txt",2)]
