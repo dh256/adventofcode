@@ -1,7 +1,4 @@
-# Need to come back and complete part2
-# Requires recursion
 import re
-from typing import Container
 
 class Bags():
     def __init__(self,file_name):
