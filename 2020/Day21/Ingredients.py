@@ -1,5 +1,7 @@
 import re
 
+
+
 class Ingredients:
     '''
     Constructor
@@ -91,3 +93,5 @@ class Ingredients:
         dang_ings = ','.join([self.dangerous_ingredients[i] for i in sorted(self.dangerous_ingredients)])
 
         return total, dang_ings
+
+

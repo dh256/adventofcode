@@ -1,4 +1,5 @@
 import pytest
+
 from Ingredients import Ingredients
 
 test_data = [("test.txt",5,"mxmxvkd,sqjhc,fvjkl")]
