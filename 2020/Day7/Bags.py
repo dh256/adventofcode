@@ -46,7 +46,6 @@ class Bags():
             # check bag contents
             # if chain of contents at least one shiny gold, increment by 1
             if self.contains_gold_bag(contents):
-                print(colour)
                 bags += 1
         return bags
 
@@ -61,17 +60,14 @@ class Bags():
                 result = result or self.contains_gold_bag(self.find(c[0]))
             return result
 
-    def bags_inside_shiny_gold_bag(self,contents=None):
+    def bags_inside(self,colour='shiny gold'):
         '''
         Return the total number of bags inside shiny gold bag
         '''
         total_bags = 0
-        for c in self.bags['shiny gold']:
-            total_bags += c[1] * self.bags_inside(c[1],)
+        if self.bags[colour] is not None:
+            for c in self.bags[colour]:
+                total_bags += c[1] + (c[1] * self.bags_inside(c[0]))
         return total_bags
 
-    def bags_inside(self,contents,multiple):
-        if contents == None:
-            return multiple
-        else:
-            return contents[1] * bags_inside()
+    
