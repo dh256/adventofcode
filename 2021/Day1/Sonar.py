@@ -6,20 +6,8 @@ class Sonar:
 
     @property
     def increased(self):
-        inc = 0
-        for curr_idx in range(0,len(self.depths)-1):
-            if self.depths[curr_idx+1] > self.depths[curr_idx]:
-                inc += 1
-        return inc   
-
+        return len(['inc' for curr_idx in range(0,len(self.depths)-1) if self.depths[curr_idx+1] > self.depths[curr_idx]])
+           
     @property
     def increased2(self):
-        inc = 0
-        curr_slide_window = self.depths[0] + self.depths[1] + self.depths[2]
-        for curr_idx in range(0,len(self.depths)-3):
-            next_slide_window = self.depths[curr_idx+1] + self.depths[curr_idx+2] + self.depths[curr_idx+3]
-            if next_slide_window > curr_slide_window:
-                inc += 1
-            curr_slide_window = next_slide_window
-        return inc     
-    
+        return len(['inc' for curr_idx in range(0,len(self.depths)-3) if sum(self.depths[curr_idx:curr_idx+3]) < sum(self.depths[curr_idx+1:curr_idx+4])])
