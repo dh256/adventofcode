@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 class Instruction:
     def __init__(self, instruction_str):
         instruction_parts = instruction_str.split(' ')
