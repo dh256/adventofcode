@@ -1,3 +1,9 @@
+from enum import Enum
+
+class GasType(Enum):
+    O2=0
+    CO2=1 
+ 
 class Submarine:
 
     def __init__(self,filename):
@@ -27,63 +33,40 @@ class Submarine:
 
         return (int(gamma,2),int(epsilon,2))
 
-    def calculate_o2_rating(self,codes_remaining=None,bit_position=0):
+
+    def calculate_gas_rating(self,gas_type,codes_remaining=None,bit_position=0):
         if codes_remaining is None:
             codes_remaining = self.diagnostic_codes
 
         # calculate most common int
         zero_count = 0
         one_count = 0
-        keep = '1'
-        keep_codes = []
         for code in codes_remaining:
             if code[bit_position] == '0':
                 zero_count += 1
             else:
                 one_count +=1 
 
-        if zero_count > one_count:
-            keep = '0'
-
-        for code in codes_remaining:
-            if code[bit_position] == keep:
-                keep_codes.append(code)
-
-        # recurse
-        if len(keep_codes) > 1:
-            self.calculate_o2_rating(keep_codes,bit_position+1)
-        else:
-            self.o2_rating = int(keep_codes[0],2)
-            return
-
-    def calculate_co2_rating(self,codes_remaining=None,bit_position=0):
-        if codes_remaining is None:
-            codes_remaining = self.diagnostic_codes
-
-        # calculate most common int
-        zero_count = 0
-        one_count = 0
-        keep = '0'
-        keep_codes = []
-        for code in codes_remaining:
-            if code[bit_position] == '0':
-                zero_count += 1
+        # calculate which bit value to keep
+        if gas_type == GasType.O2:
+            if one_count >= zero_count:
+                keep = '1'
             else:
-                one_count +=1 
+                keep = '0'
+        else:
+            if zero_count <= one_count:
+                keep = '0'
+            else:
+                keep = '1'
 
-        if one_count < zero_count:
-            keep = '1'
-
-        for code in codes_remaining:
-            if code[bit_position] == keep:
-                keep_codes.append(code)
+        # filter out codes whose bit at current position don't match keep bit
+        codes_remaining = list(filter(lambda x : x[bit_position] == keep, codes_remaining))
 
         # recurse
-        if len(keep_codes) > 1:
-            self.calculate_co2_rating(keep_codes,bit_position+1)
+        if len(codes_remaining) > 1:
+            return self.calculate_gas_rating(gas_type,codes_remaining,bit_position+1)
         else:
-            self.co2_rating = int(keep_codes[0],2)
-            return
+            return int(codes_remaining[0],2)
 
     @property
     def power_consumption(self):
@@ -92,6 +75,4 @@ class Submarine:
 
     @property 
     def life_support_rating(self):
-        self.calculate_o2_rating()
-        self.calculate_co2_rating()
-        return self.o2_rating * self.co2_rating
+        return self.calculate_gas_rating(GasType.O2) * self.calculate_gas_rating(GasType.CO2)
