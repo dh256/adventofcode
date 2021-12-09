@@ -12,5 +12,4 @@ def test_find_risk_level(filename, result):
 @pytest.mark.parametrize('filename,number,result',test_data2)
 def test_find_largest_basins(filename, number, result):
     cave = Cave(filename)
-    cave.find_risk_level()
     assert(cave.find_largest_basins(number) == result)
