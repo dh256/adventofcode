@@ -25,11 +25,7 @@ class Cave:
                 all_paths.extend(self.graph.paths)
 
         # de-dupe
-        ap_dict = {}
-        for path in [','.join(ap) for ap in all_paths]:
-            if path not in ap_dict:
-                ap_dict[path] = 1
-
-        return len(ap_dict)
+        return len({','.join(ap) for ap in all_paths})
+        
 
 
