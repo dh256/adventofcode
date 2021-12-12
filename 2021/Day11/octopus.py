@@ -1,12 +1,3 @@
-# Need to figure out why 8,9 is 7 when it should be 6 after second go around of step 2
-
-from collections import namedtuple
-from colorama import Style, Fore
-
-Point = namedtuple('Point', 'x y')
-
-directions = ['y-1,x', 'y+1,x', 'y,x+1', 'y,x-1', 'y-1.x+1', 'y+1,x+1', 'y+1,x-1', 'y-1,x-1']
-
 class Octopus:
     def __init__(self,filename):
         with open(filename,'r') as input_file:
@@ -83,13 +74,3 @@ class Octopus:
                         self.grid[y+y_diff][x+x_diff] += 1
 
     
-    def __str__(self):
-        out_str = f'{Fore.WHITE}'
-        for row in self.grid:
-            for c in row:
-                if c != 0:
-                    out_str += f'{c} '
-                else:
-                    out_str += f'{Style.BRIGHT}{c}{Style.NORMAL} '
-            out_str += '\n'
-        return out_str
