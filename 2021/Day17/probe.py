@@ -8,7 +8,7 @@ class Probe:
             self.x_range = range(nums[0],nums[1])
             self.y_range = range(nums[2],nums[3])
 
-    def highest_y(self):
+    def fire(self):
         i_vels_hit_target = set()
         highest_ever_y = 0
         for ix_vel in range(1,self.x_range.stop+1):   # x_vel must be greater than 1 to move forward and <= x_range end to not overshoot target on first move 
