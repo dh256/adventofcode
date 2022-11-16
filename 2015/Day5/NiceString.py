@@ -1,19 +1,23 @@
 import re
 
 class NiceStrings():
-    def __init__(self,filename):
+    def __init__(self,filename: str):
         with open(filename,"r") as data:
             self.nice_strings = [NiceString(line.strip('\n')) for line in data]
     
-    def count_nice(self):
-        result = [nice_string for nice_string in self.nice_strings if nice_string.is_nice()]
+    def count_nice_part1(self) -> int:
+        result = [nice_string for nice_string in self.nice_strings if nice_string.is_nice_part1()]
+        return len(result)
+
+    def count_nice_part2(self) -> int:
+        result = [nice_string for nice_string in self.nice_strings if nice_string.is_nice_part2()]
         return len(result)
 
 class NiceString():
     def __init__(self, str):
         self.str = str
 
-    def is_nice(self):
+    def is_nice_part1(self) -> bool:
         result = False
 
         '''
@@ -30,7 +34,7 @@ class NiceString():
 
         # vowels
         vowels_found = re.findall(vowels_reg_ex,self.str)
-        vowels = len(vowels_found) == 3
+        vowels = len(vowels_found) >= 3
     
         # letters appear twice
         letters_twice_found = re.findall(letters_twice_reg_ex, self.str)
@@ -42,8 +46,20 @@ class NiceString():
 
         return vowels and appears_twice and not contains
 
-    def is_naughty(self):
-        return not self.is_nice()
+    def is_nice_part2(self) -> bool:
+        '''
+            Nice if:
+                contains at least one letter which repeats with exactly one letter between them
+                contains a pair of any two letters that appears at least twice in the string without overlapping
+        '''
+        repeat_with_one_between_reg_ex = r"([a-z])([a-z])\1"
+        repeat_with_one_between = len(re.findall(repeat_with_one_between_reg_ex,self.str)) > 0
 
-    def __str__(self):
-        return self.str
+        pair_appears_twice_no_overlap = False
+        for i in range(0,len(self.str)-1):
+            search_str = self.str[i:i+2]
+            if search_str in self.str[i+2:]:
+                pair_appears_twice_no_overlap = True
+                break
+
+        return repeat_with_one_between and pair_appears_twice_no_overlap
