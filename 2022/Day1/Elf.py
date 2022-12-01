@@ -14,10 +14,5 @@ class Elf:
         self.elves = sorted(self.elves, key=lambda cal: cal, reverse=True)
 
 
-    @property
-    def most_calorific(self) -> int:
-        return self.elves[0]
-
-    @property
-    def top3_most_calorific(self) -> int:
-        return sum(self.elves[0:3])
+    def topn_most_calorific(self, n: int) -> int:
+        return sum(self.elves[0:n])
