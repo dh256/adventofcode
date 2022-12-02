@@ -1,26 +1,14 @@
-from enum import Enum, auto
+from enum import Enum
 
 class Material(Enum):
     Rock = 1
     Paper = 2
     Scissors = 3
 
-class Result(Enum):
-    Win=auto()
-    Draw=auto()
-    Defeat=auto()
-    
-class RoundResult:
-    def __init__(self,code):
-        if code == 'X':
-            self.result = Result.Defeat
-        elif code == 'Y':
-            self.result = Result.Draw
-        elif code == 'Z':
-            self.result = Result.Win
-        else:
-            print('Corrupt Input. Exiting program')
-            exit(-1)
+class RoundResult(Enum):
+    Win='Z'
+    Draw='Y'
+    Defeat='X'
 
 class RockPaperScissors:
     
@@ -50,31 +38,31 @@ class RockPaperScissors:
                 score = 0
         return score + self.material.value
 
-    def other_material(self, result: Result):
+    def other_material(self, result: RoundResult):
         '''
         Determines what other material based on Round Result
         Return instance of other material
         '''
         if self.material == Material.Rock: 
-            if result == Result.Win:
+            if result == RoundResult.Win:
                 return RockPaperScissors('B')
-            elif result == Result.Draw:
+            elif result == RoundResult.Draw:
                 return RockPaperScissors('A')
             else:
                 return RockPaperScissors('C')
 
         elif self.material == Material.Paper:
-            if result == Result.Win:
+            if result == RoundResult.Win:
                 return RockPaperScissors('C')
-            elif result == Result.Draw:
+            elif result == RoundResult.Draw:
                 return RockPaperScissors('B')
             else:
                 return RockPaperScissors('A')
 
         elif self.material == Material.Scissors:
-            if result == Result.Win:
+            if result == RoundResult.Win:
                 return RockPaperScissors('A')
-            elif result == Result.Draw:
+            elif result == RoundResult.Draw:
                 return RockPaperScissors('C')
             else:
                 return RockPaperScissors('B')
@@ -99,5 +87,5 @@ class Game:
         if self.strategy == 1:
             return sum([round[0].compare(round[1]) for round in self.rounds])
         else:
-            return sum([round[0].other_material(round[1].result).compare(round[0]) for round in self.rounds])
+            return sum([round[0].other_material(round[1]).compare(round[0]) for round in self.rounds])
 
