@@ -8,6 +8,9 @@ class Trees:
         self.max_x = len(self.trees[0])-1
 
     def number_visible(self) -> int:
+        '''
+        Return number of trees visible along any row/column from outside forest
+        '''
         interior_visible = 0
         edge_visible = ((self.max_x+1) * 2) + ((self.max_y+1) * 2) - 4
         for x in range(1,self.max_x):
@@ -47,9 +50,11 @@ class Trees:
         return edge_visible + interior_visible
 
     def scenic_score(self) -> int:
-        # calculate scenic score of each tree and return max
-        # No need to do trees on edge as their scenic score is always 0
+        '''
+        Calculate scenic score of each tree and return max
+        '''
         scenic_scores = []
+        # No need to do trees on edge as their scenic score is always 0
         for x in range(1,self.max_x):
             for y in range(1,self.max_y):
                 curr_tree = self.trees[y][x]
