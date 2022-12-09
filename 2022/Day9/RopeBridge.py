@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
+from itertools import pairwise
 
 class Direction(Enum):
     RIGHT='R'
@@ -39,39 +40,64 @@ class Move:
             self.y_inc = -1
 
 class Rope:
-    def __init__(self,file_name):
+    def __init__(self,file_name,length=2):
         with open(file_name,'r') as input_file:
             self.moves = [Move(move_parts=line.strip('\n').split(' ')) for line in input_file]
 
-        # mark the start position of head and tail
-        self.head_curr_pos = Point(0,0)
-        self.tail_curr_pos = Point(0,0)
-
+        self.knots = [Point(0,0)] * length      # create a list holding current position of each knot. Head knot is index 0; 
+        self.tail_knot = length - 1             # index of tail knot
     
-    def move(self) -> int():
+    def move_knot(self,successor_index: int) -> None:
+        # only move predecessor if is no longer adjacent to successor
+        successor = self.knots[successor_index]
+        predecessor = self.knots[successor_index+1]
+        if not successor.adjacent(predecessor):
+            # move predecessor
+            if successor.x > predecessor.x and successor.y == predecessor.y:
+                # move one to the right
+                predecessor = Point(predecessor.x+1,predecessor.y)
+            elif successor.x < predecessor.x and successor.y == predecessor.y:
+                # move one to the left
+                predecessor = Point(predecessor.x-1,predecessor.y)
+            elif successor.y > predecessor.y and successor.x == predecessor.x:
+                # move one up
+                predecessor = Point(predecessor.x,predecessor.y+1)
+            elif successor.y < predecessor.y and successor.x == predecessor.x:
+                # move one down
+                predecessor = Point(predecessor.x,predecessor.y-1)
+            elif successor.x > predecessor.x and successor.y > predecessor.y:
+                # move up one and right one
+                predecessor = Point(predecessor.x+1,predecessor.y+1)
+            elif successor.x > predecessor.x and successor.y < predecessor.y:
+                # move down one and right one
+                predecessor = Point(predecessor.x+1,predecessor.y-1)
+            elif successor.x < predecessor.x and successor.y < predecessor.y:
+                # move left one and down one
+                predecessor = Point(predecessor.x-1,predecessor.y-1)
+            elif successor.x < predecessor.x and successor.y > predecessor.y:
+                # move up one and left one
+                predecessor = Point(predecessor.x-1,predecessor.y+1)
+
+            # update predecessors new point
+            self.knots[successor_index+1] = predecessor
+
+    def move(self) -> None:
         '''
         Move rope according to move instructions
-        Record the points that tail visits (once) along the way
+        Record the points that tail knot visits (once) along the way
         '''
         self.tail_visited_once = {Point(0,0)}        # Use a set. Only need to know if visited once
         for move in self.moves:
             for _ in range(0,move.steps):
                 # head moves
-                self.head_curr_pos = Point(self.head_curr_pos.x + move.x_inc, self.head_curr_pos.y + move.y_inc)
+                self.knots[0] = Point(self.knots[0].x + move.x_inc, self.knots[0].y + move.y_inc)
 
-                # tail moves only if its not adjacent to head
-                if not self.head_curr_pos.adjacent(self.tail_curr_pos):
-                    # move tail
-                    if move.direction == Direction.RIGHT:
-                        self.tail_curr_pos = Point(self.head_curr_pos.x-1, self.head_curr_pos.y)
-                    elif move.direction == Direction.LEFT:
-                        self.tail_curr_pos = Point(self.head_curr_pos.x+1, self.head_curr_pos.y)
-                    elif move.direction == Direction.UP:
-                        self.tail_curr_pos = Point(self.head_curr_pos.x, self.head_curr_pos.y-1)
-                    elif move.direction == Direction.DOWN:
-                        self.tail_curr_pos = Point(self.head_curr_pos.x, self.head_curr_pos.y+1)
+                # move all other knots (will only move if not adjacent to its successor)
+                for knot_index in range(0,self.tail_knot):
+                    self.move_knot(knot_index)
 
-                    self.tail_visited_once.add(self.tail_curr_pos)
+                # add tail to tail_visited_set (duplicates ignored)
+                self.tail_visited_once.add(self.knots[self.tail_knot])
     
     @property
     def tail_visit_at_least_once(self) -> int:
