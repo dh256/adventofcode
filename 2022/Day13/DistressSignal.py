@@ -61,7 +61,7 @@ class Signal:
         self.packets.append(eval('[[2]]'))
         self.packets.append(eval('[[6]]'))
         
-        # do the sort
+        # sort packets into order (insertion sort)
         for curr_index in range(1, len(self.packets)):
             curr_packet = self.packets[curr_index]
             j = curr_index
@@ -71,6 +71,7 @@ class Signal:
                 j -= 1
                 self.packets[j] = curr_packet
 
+        # find indexes of key packets in sorted list and return product of these instances
         first_decoder_index = self.packets.index(eval('[[2]]'))+1
         second_decoder_index = self.packets.index(eval('[[6]]'))+1
         return first_decoder_index * second_decoder_index
