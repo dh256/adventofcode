@@ -5,7 +5,7 @@ def main():
     print(f'{cave.falling_sand()}')
 
     # reset
-    cave = Cave('input.txt')
+    cave.reset()
     print(f'{cave.falling_sand2()}')
 
 if __name__ == '__main__':
