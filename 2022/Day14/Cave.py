@@ -35,8 +35,7 @@ class Cave:
         self.grid = dict()
         with open(file_name, 'r') as input_file:
             for line in input_file:
-                line = line.strip('\n')
-                self.rock_line_coords = line.split(' -> ')
+                self.rock_line_coords = line.strip('\n').split(' -> ')
                 start_point = Point.convert_to_point(self.rock_line_coords[0])
                 for curr_index in range(1, len(self.rock_line_coords)):
                     end_point = Point.convert_to_point(self.rock_line_coords[curr_index])
