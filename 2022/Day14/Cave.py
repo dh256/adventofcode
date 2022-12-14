@@ -34,37 +34,45 @@ class Cave:
         '''
         self.grid = dict()
         with open(file_name, 'r') as input_file:
-            for line in input_file:
-                self.rock_line_coords = line.strip('\n').split(' -> ')
-                start_point = Point.convert_to_point(self.rock_line_coords[0])
-                for curr_index in range(1, len(self.rock_line_coords)):
-                    end_point = Point.convert_to_point(self.rock_line_coords[curr_index])
-                    
-                    # lines can be drawn either up or down
-                    if start_point.y > end_point.y:
-                        start_y = end_point.y
-                        end_y = start_point.y
-                    else:
-                        start_y = start_point.y
-                        end_y = end_point.y
+            raw_rocks_line_coords = [line.strip('\n').split(' -> ') for line in input_file] 
 
-                    # lines can be drawn either left or right
-                    if start_point.x > end_point.x:
-                        start_x = end_point.x
-                        end_x = start_point.x
-                    else:
-                        start_x = start_point.x
-                        end_x = end_point.x
-                    
-                    for x in range(start_x, end_x+1):
-                        for y in range(start_y, end_y+1):
-                            self.grid[Point(x,y)] = TileMaterial.Rock
-                    start_point = end_point
-
+        # add rocks to grid    
+        for rock_line_coords in raw_rocks_line_coords:
+            self._add_rocks_to_grid(rock_line_coords)
+            
         # find last row that has rock on it
         self.last_rock_row = max([key.y for key in self.grid.keys()])
         self.original = deepcopy(self.grid)
-        
+
+    def _add_rocks_to_grid(self,rock_line_coords: str):
+        start_point = Point.convert_to_point(rock_line_coords[0])
+        for curr_index in range(1, len(rock_line_coords)):
+            end_point = Point.convert_to_point(rock_line_coords[curr_index])
+            
+            # lines can be drawn either up or down
+            if start_point.y > end_point.y:
+                start_y = end_point.y
+                end_y = start_point.y
+            else:
+                start_y = start_point.y
+                end_y = end_point.y
+
+            # lines can be drawn either left or right
+            if start_point.x > end_point.x:
+                start_x = end_point.x
+                end_x = start_point.x
+            else:
+                start_x = start_point.x
+                end_x = end_point.x
+            
+            for x in range(start_x, end_x+1):
+                for y in range(start_y, end_y+1):
+                    self.grid[Point(x,y)] = TileMaterial.Rock
+            
+            # next line of rocks starts at end of previous line
+            start_point = end_point
+
+
     def reset(self) -> None:
         '''
         Resets cave to original state - useful for Part 2
