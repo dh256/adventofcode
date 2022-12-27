@@ -3,7 +3,7 @@ Name: day25.py
 Author: David Hanley
 Date: 26-Dec-2022
 """
-from SNAFU import SNAFU, SNAFUNumber
+from SNAFU import SNAFU
 
 def main():
     snafu = SNAFU('input.txt')

@@ -2,12 +2,7 @@
 Name: SNAFU.py
 Author: David Hanley
 Date: 26-Dec-2022
-
-Note:
-To Decimal working
-To SNAFU not working, struggling to get my head around this
 """
-from collections import deque
 
 class SNAFUNumber:
     base: int = 5
@@ -36,21 +31,21 @@ class SNAFUNumber:
         return dec_number
 
     @classmethod
-    def carry_snafu_digit(cls, num, index, digit):
+    def __carry_snafu_digit(cls, num: list[int], index: int, digit: int):
         try:
             num[index] += digit
         except IndexError:
             num.append(digit)
 
     @classmethod
-    def insert_snafu_digit(cls, num, index, digit):
+    def __insert_snafu_digit(cls, num: list[int], index: int, digit: int):
         try:
             num[index] = digit
         except IndexError:
             num.append(digit)
 
     @classmethod
-    def to_snafu(cls, number: int):
+    def to_snafu(cls, number: int) -> object:
         '''
         Convert given decimal number returning a SNAFUNumber
         '''
@@ -59,23 +54,23 @@ class SNAFUNumber:
         while number > 0:
             candidate_dig = number % SNAFUNumber.base
             if candidate_dig in range(0,3):           
-                SNAFUNumber.carry_snafu_digit(num, curr_index, candidate_dig)
+                SNAFUNumber.__carry_snafu_digit(num, curr_index, candidate_dig)
             else:
                 if candidate_dig == 3:
-                    SNAFUNumber.carry_snafu_digit(num, curr_index, -2)
+                    SNAFUNumber.__carry_snafu_digit(num, curr_index, -2)
                 else:
-                    SNAFUNumber.carry_snafu_digit(num, curr_index, -1)
+                    SNAFUNumber.__carry_snafu_digit(num, curr_index, -1)
                 
-                SNAFUNumber.carry_snafu_digit(num, curr_index+1, 1)
+                SNAFUNumber.__carry_snafu_digit(num, curr_index+1, 1)
             
-            # round up (only ever curr_index+1 and beyond)
+            # round up where necessary (only ever curr_index+1 and beyond)
             for index in range(curr_index,len(num)):
                 if num[index] == 3:
-                    SNAFUNumber.insert_snafu_digit(num, index, -2)
-                    SNAFUNumber.carry_snafu_digit(num, index+1, 1)
+                    SNAFUNumber.__insert_snafu_digit(num, index, -2)
+                    SNAFUNumber.__carry_snafu_digit(num, index+1, 1)
                 elif num[index] == 4:
-                    SNAFUNumber.insert_snafu_digit(num, index, -1)
-                    SNAFUNumber.carry_snafu_digit(num, index+1, 1)
+                    SNAFUNumber.__insert_snafu_digit(num, index, -1)
+                    SNAFUNumber.__carry_snafu_digit(num, index+1, 1)
                     
             number = number // SNAFUNumber.base
             curr_index += 1
