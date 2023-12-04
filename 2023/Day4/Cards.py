@@ -1,5 +1,7 @@
 import re
-from dataclasses import dataclass, field, InitVar
+from dataclasses import dataclass
+from collections import defaultdict
+
 
 @dataclass
 class Card:
@@ -29,8 +31,7 @@ class Cards:
                 winners = {int(d) for d in re.findall(nums_re, nums[0])}
                 selected = {int(d) for d in re.findall(nums_re, nums[1])}
                 self.cards.append(Card(id, winners, selected))
-                self.org_cards[id] = Card(id, winners, selected)                   # useful for part 2, quick way of finding cards to copy
-
+                
     def calc_points(self) -> int:
         '''
         Calculate points value of all scrarchcards
@@ -41,13 +42,12 @@ class Cards:
     def calc_total_cards(self) -> int:
         '''
         Part 2: calculate total of number of cards left
-        Note: Could be more efficient but will do for now
+        More efficient version - just keep a running total of cards and sum these together
         '''
-        for curr_card in range(1,len(self.org_cards)+1):
-            # find all cards with an id of curr_cards
-            for card in list(filter(lambda card: card.id == curr_card, self.cards)):
-                matches = card.matches
-                # copy cards
-                for c in range(curr_card+1,curr_card+matches+1):  
-                    self.cards.append(self.org_cards[c])
-        return len(self.cards)
+        card_totals = defaultdict(int)
+        for card in self.cards:
+            card_totals[card.id] += 1
+            matches = card.matches
+            for c in range(card.id+1,card.id+matches+1):
+                card_totals[c] += card_totals[card.id]
+        return sum(card_totals.values())
