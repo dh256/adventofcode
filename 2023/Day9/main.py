@@ -1,8 +1,3 @@
-'''
-Part 1 first guess = 1939617307 wrong, too high (tests passing)
-Must be a case that I am getting wrong
-'''
-
 from Oasis import Oasis
 
 def main():

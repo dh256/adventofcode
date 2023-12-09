@@ -17,8 +17,8 @@ class Oasis:
             for i in range(len(diffs[-1])-1):
                 next_diffs.append(diffs[-1][i+1]-diffs[-1][i])
             diffs.append(next_diffs)
-        if len(diffs) == 2:
-            print(f'Interesting {h}')
+
+        # Only need to return last number of each diff
         return diffs
 
     def sum_of_extrapolated(self, part: int) -> int:
