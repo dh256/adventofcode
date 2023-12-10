@@ -13,3 +13,6 @@ class Point():
         Offset point by (x+a,y+b) where (a,b) is offset tuple
         '''
         return Point(self.x + offset[0], self.y + offset[1])
+    
+    def __str__(self) -> str:
+        return f'({self.x}, {self.y})'

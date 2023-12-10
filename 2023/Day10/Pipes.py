@@ -3,14 +3,17 @@ from collections import deque
 
 class Pipes:
     pipes = ('|','-','L','J','7','F')       # pipes    
-    connect_from_east = ('-','J','7')       # anything that can connect to something from the east
-    connect_from_west = ('-','L','F')       # anything that can connect to something from the east
-    connect_from_north = ('|','7','F')      # anything that can connect to something from the east
-    connect_from_south = ['|','L','J']      # anything that can connect to something from the east
-    direction_offsets = {'N': (0,-1), 'S': (0,1), 'W': (-1,0), 'E': (1,0)}
+    connect_from_east = ('-','J','7')       # pipes that can connect to another pipe from the east
+    connect_from_west = ('-','L','F')       # pipes that can connect to another pipe from the west
+    connect_from_north = ('|','7','F')      # pipes that can connect to another pipe from the north
+    connect_from_south = ['|','L','J']      # pipes that can connect to another from the south
+    direction_offsets = {'N': (0,-1), 'S': (0,1), 'W': (-1,0), 'E': (1,0)}      # point offsets for each direction that you can move
 
     def set_s_pipe(self) -> str:
-        # which ways can you move
+        '''
+        Figure out what the S pipe actually is
+        Determine the only two valid pairs and then set to correct pipe
+        '''
         for p in Pipes.pipes:
             valid_directions: set[str] = set()
             for direction in Pipes.direction_offsets.items():
@@ -52,24 +55,16 @@ class Pipes:
             except ValueError:
                 continue
 
-        #set s_pipe
+        # replace S pipe with correct pipe
         self.grid[self.start.y]=self.grid[self.start.y].replace('S', self.set_s_pipe())
 
-    '''
-    DH VALID MOVES LOGIC IS WRONG
-    WORK WITH INPUT6.TXT
-    WHEN GET TO (1,1) a '-' character, valid moves returns TRUE for N
-    THIS IS INCORRECT, only valid moves are E or W
-    NEED TO CONSIDER CURRENT CHAR FIRST
-    e.g., if a - only valid moves are E or W and so 
-    '''
-
-    def valid_move(self, curr_pipe: str, new_pos: Point,direction: str) -> bool:
+    def valid_move(self, curr_pipe: str, new_pos: Point, direction: str) -> bool:
         '''
-        Determines if a valid move
+        Determine if given move direction is valid
         '''
         valid_pipes = None
         
+        # make sure still on grid
         if not (new_pos.x >= self.cols or new_pos.y >= self.rows or new_pos.x < 0 or new_pos.y < 0):
 
             if curr_pipe == '-':
@@ -113,22 +108,49 @@ class Pipes:
         else:
             return False
 
-    def steps_to_farthest(self) -> int:
-        # use breadth first search to find steps back to S
+    def get_path(self) -> list[Point]:
+        # use breadth first search to find path back to S
         q = deque()
-        q.appendleft((self.start,None,0))
+        q.appendleft((self.start,None,[self.start]))
         while True:
-            try:
-                curr_pos, from_pos, steps = q.pop()
-                for direction in Pipes.direction_offsets.items():
-                    next_pos = curr_pos.offset(direction[1])
-                    if (from_pos is None) or (next_pos != from_pos):
-                        if self.valid_move(self.grid[curr_pos.y][curr_pos.x], next_pos, direction[0]):
-                            if next_pos == self.start:
-                                return (steps+1) // 2
-                            else:
-                                q.appendleft((next_pos,curr_pos,steps+1))
-            except IndexError:
-                print('No path found!!')
-                exit()
-                
+            curr_pos, from_pos, path = q.pop()
+            for direction in Pipes.direction_offsets.items():
+                next_pos = curr_pos.offset(direction[1])
+                if from_pos != next_pos:            # prevent move backwards
+                    if self.valid_move(self.grid[curr_pos.y][curr_pos.x], next_pos, direction[0]):
+                        if next_pos == self.start:
+                            return path
+                        else:
+                            q.appendleft((next_pos,curr_pos,[*path,next_pos]))
+
+    def steps_to_farthest(self) -> int:
+        return len(self.get_path()) // 2
+
+    def enclosed_by_loop(self) -> int:
+        path = self.get_path()
+
+        ''' 
+        Find enclosed loops in path using Pick's Theorem and the Shoelace Formula
+        
+        A = i + b / 2 - 1
+
+        where A is Area
+        i is internal area  (calculated using Shoelace formula)
+        b is number of points (length of path)
+        
+        i = (sum of (Point 1.x * Point 2.y - Point 1.y * Point 2.x)) / 2
+
+        I did need a hint for the maths of this but then easy to implement
+        Points must be in an ordered list, which you get from getting path in Part 1
+        '''
+        sum = 0
+        
+        # showlace formula
+        for idx in range(len(path)):
+            p1 = path[idx]
+            p2 = path[(idx+1)%len(path)]      # need to loop back first cooord
+            sum += p1.x * p2.y - p1.y * p2.x        
+            i = abs(sum//2)
+
+        # Pick's Theorem
+        return(i-len(path)//2+1)
