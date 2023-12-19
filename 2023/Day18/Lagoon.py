@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from Point import Point
 
-offsets = {'L': (-1,0), 'R': (1,0), 'D': (0,1), 'U': (0,-1)}
-
 @dataclass
 class Instruction:
     direction: str
@@ -10,36 +8,25 @@ class Instruction:
     colour: str
 
 class Lagoon:
+    offsets = {'L': (-1,0), 'R': (1,0), 'D': (0,1), 'U': (0,-1)}
+    
     def __init__(self,file_name) -> None:
         with open(file_name, 'r') as input_file:
             instruction_parts = [line.strip().split() for line in input_file]
             self.instructions: list[Instruction] = [Instruction(instruction_part[0], int(instruction_part[1]), instruction_part[2][2:-1]) for instruction_part in instruction_parts]
 
-    def get_next_point(self, curr_point: Point, direction: str, cubes: int) -> Point:
-        if direction == 'R':
-            next_point = Point(curr_point.x+cubes,curr_point.y)
-        elif direction == 'L':
-            next_point = Point(curr_point.x-cubes,curr_point.y)
-        elif direction == 'U':
-            next_point = Point(curr_point.x,curr_point.y-cubes)
-        elif direction == 'D':
-            next_point = Point(curr_point.x,curr_point.y+cubes)
-
-        return next_point
-
     def part1(self) -> int:
         '''
-        Calculate cubes dug
+        Return cubes dug
         '''
-        print(f'{sum([instruction.cubes for instruction in self.instructions])}')
-
+        
         '''
         Get points of polygon
         '''
         points: list[Point] = []
         point = Point(0,0)
-        for instruction in self.instructions:
-            point = self.get_next_point(point,instruction.direction,instruction.cubes)
+        for i in self.instructions:
+            point = point.offset((Lagoon.offsets[i.direction][0]*i.cubes, Lagoon.offsets[i.direction][1]*i.cubes)) 
             points.append(point)
 
         '''
@@ -57,7 +44,7 @@ class Lagoon:
         return area+(sum([instruction.cubes for instruction in self.instructions]) // 2)+1
     
     def part2(self) -> int:
-        # remap instructions
+        # remap instructions based 
         direction_map = {'0': 'R', '1': 'D', '2': 'L', '3': 'U'}
         for instruction in self.instructions:
             instruction.cubes = int(instruction.colour[0:5],16)
