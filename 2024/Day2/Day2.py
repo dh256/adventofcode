@@ -3,7 +3,6 @@
 David Hanley, December 2024
 '''
 import re
-from copy import copy
 
 class Day2:
     def __init__(self,file_name:str) -> None:
@@ -15,7 +14,7 @@ class Day2:
         for report in all_reports:
             self.reports.append([int(num) for num in report])
     
-    def safe(self, report) -> bool:
+    def safe(self, report: list[int]) -> bool:
         if len(report) > 1:
             decreasing = report[0] > report[1]
             for index in range(0,len(report)-1):
@@ -28,7 +27,7 @@ class Day2:
                         return False         
         return True      
     
-    def part1(self) -> int:
+    def part1(self) -> list[int]:
         safe_count: int = 0
         for report in self.reports:
             safe_count = safe_count + 1 if self.safe(report) else safe_count
@@ -38,18 +37,17 @@ class Day2:
     def part2(self) -> int:
         safe_count: int = 0
         for report in self.reports:
+            # check if original report is safe
             if self.safe(report):
                 safe_count += 1
             else:
                 # remove each level, one at a time and check if now safe
                 # if so, increment safe_count and move to next report
                 for level_to_remove in range(0,len(report)):
-                    if level_to_remove < len(report):
-                        next_report: list[int] = report[0:level_to_remove] + report[level_to_remove+1:]    
-                    else:
-                        next_report: list[int] = report[-1]
+                    next_report: list[int] = report[0:level_to_remove] + report[level_to_remove+1:]    
                     if self.safe(next_report):
                         safe_count += 1
                         break
+                    
         return safe_count
                         
