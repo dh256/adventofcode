@@ -63,20 +63,20 @@ class Day5:
 
     def part2(self, invalid_indices: list[int]) -> int:
         # find incorrectly ordered reorder them until ok and sum middles once in correct order
-        sum_middles = 0
+        sum_middles: int = 0
         for invalid_pu in invalid_indices:
-            page_update = self.page_updates[invalid_pu]
+            page_update: int = self.page_updates[invalid_pu]
             order_changed: bool = False
-            index = 0
+            index: int = 0
             while index < len(page_update)-1:
                 # check that every page num after curr page corresponds to a page ordering rule
-                curr_page = page_update[index]
-                remaining_pages = page_update[index+1:]
+                curr_page: int = page_update[index]
+                remaining_pages: int = page_update[index+1:]
                 for remaining_page in remaining_pages:
                     if remaining_page not in self.page_orders[curr_page]:
                         # invalid
                         # swap numbers and continue from same index
-                        remain_index = page_update.index(remaining_page)
+                        remain_index: int = page_update.index(remaining_page)
                         page_update[index] = remaining_page
                         page_update[remain_index] = curr_page
                         order_changed = True
