@@ -28,16 +28,19 @@ class Day5:
             
     def part1(self) -> int:
         ''' 
-        Find correctly ordered page updates.
+        Find correctly ordered page updates
+        Calculate a running sum of the middle page numbers for all correctly ordered page updates
+        To help with Part 2 return a list of indices of all incorrectly updates 
         '''
-        sum_middles = 0
-        for page_update in self.page_updates:
-            valid_order = True
-            index = 0
+        sum_middles: int = 0
+        invalid_indices: list[int] = list()
+        for pu_index, page_update in enumerate(self.page_updates):
+            valid_order: bool = True
+            index: int = 0
             while index < len(page_update)-1:
                 # check that every page num after curr page corresponds to a page ordering rule
-                curr_page = page_update[index]
-                remaining_pages = page_update[index+1:]
+                curr_page: int = page_update[index]
+                remaining_pages: list[int] = page_update[index+1:]
                 for remaining_page in remaining_pages:
                     if remaining_page not in self.page_orders[curr_page]:
                         # invalid
@@ -47,6 +50,7 @@ class Day5:
                 # if not valid - move to next page update 
                 # otherwise, move to next page number and check again
                 if not valid_order:
+                    invalid_indices.append(pu_index)
                     break
                 else:
                     index += 1
@@ -55,13 +59,13 @@ class Day5:
             if valid_order:
                 sum_middles += page_update[len(page_update) // 2]
             
-        return sum_middles
+        return sum_middles, invalid_indices
 
-    def part2(self) -> int:
+    def part2(self, invalid_indices: list[int]) -> int:
         # find incorrectly ordered reorder them until ok and sum middles once in correct order
         sum_middles = 0
-        for page_update in self.page_updates:
-            valid_order: bool = True
+        for invalid_pu in invalid_indices:
+            page_update = self.page_updates[invalid_pu]
             order_changed: bool = False
             index = 0
             while index < len(page_update)-1:
@@ -71,21 +75,19 @@ class Day5:
                 for remaining_page in remaining_pages:
                     if remaining_page not in self.page_orders[curr_page]:
                         # invalid
-                        # swap numbers and continie from same index
+                        # swap numbers and continue from same index
                         remain_index = page_update.index(remaining_page)
                         page_update[index] = remaining_page
                         page_update[remain_index] = curr_page
-                        valid_order = False
                         order_changed = True
                         break 
                 
-                if not valid_order:
-                    valid_order = True
+                if order_changed:
+                    order_changed = False
                 else:
                     index += 1
             
-            if order_changed:
-                sum_middles += page_update[len(page_update) // 2]
+            sum_middles += page_update[len(page_update) // 2]
             
         return sum_middles
                         
