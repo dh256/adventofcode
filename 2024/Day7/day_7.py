@@ -5,7 +5,7 @@ David Hanley, December 2024
 from Day7 import Day7
                             
 def main():
-    d = Day7('tests/test1.txt')
+    d = Day7('input.txt')
     result = d.solution()
     print(f'Part 1: {result[0]}')
     print(f'Part 2: {result[1]}')

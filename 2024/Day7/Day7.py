@@ -73,5 +73,6 @@ class Day7:
                                 break
                             else:
                                 p2_result += equation[0]
+                                break
         
         return (p1_result,p2_result)
