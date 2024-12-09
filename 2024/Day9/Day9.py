@@ -2,7 +2,6 @@
 ''' 
 David Hanley, December 2024
 '''
-from collections import defaultdict
 import re
 
 class Day9:
@@ -12,9 +11,9 @@ class Day9:
         
         self.disk: list[str | int] = list()
         self.file_blocks: dict[int, tuple[int,int]] = dict()  # useful for Part 2, holds start index and length of of each file block
-        disk_index = 0
+        disk_index: int = 0
         for map_index, c in enumerate(disk_map):
-            file_block = map_index % 2 == 0
+            file_block: bool = map_index % 2 == 0
             if file_block:
                 append = map_index // 2
                 file_block_start = disk_index
@@ -61,7 +60,7 @@ class Day9:
         Return updated string representation of disk
         '''
         # find first block of free space big enough to hold file block
-        re_str = '\\.{' + f'{file_block_length}' + ',}'
+        re_str: str = '\\.{' + f'{file_block_length}' + ',}'
         match = re.search(rf'{re_str}',disk_str[0:file_block_start])
         if match:
             # swap if a match found
@@ -81,7 +80,7 @@ class Day9:
         Use information from file_blocks dict (created in __init__) to get start indexes and lengths of each file block
         Once swaps complete return checksum
         '''
-        disk_str = ''.join(map(lambda d: 'F' if type(d) is int else d, self.disk)) 
+        disk_str: str = ''.join(map(lambda d: 'F' if type(d) is int else d, self.disk)) 
         for file_id in range(max(self.file_blocks.keys()),-1,-1):
             disk_str = self.swap(self.file_blocks[file_id][0],self.file_blocks[file_id][1],disk_str)
             
