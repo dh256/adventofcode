@@ -37,8 +37,8 @@ class Day10:
         For Part 1 count the distinct number of time a 9 is reached
         For Part 2 count all times a 9 reached
         '''
-        total_score = 0             # part 1
-        total_rating = 0            # part 2
+        total_score: int = 0             # part 1
+        total_rating: int = 0            # part 2
         increments: tuple[int,int] = [(1,0),(-1,0),(0,1),(0,-1)]   # right, left, down, up
         for trailhead in self.trailheads:
             nines_reachable: list[Point] = list()
@@ -46,17 +46,19 @@ class Day10:
             stack.appendleft((trailhead))
             while len(stack) > 0:
                 curr_position: Point = stack.popleft()
-                for inc in increments:
+                next_positions = [curr_position.increment(inc) for inc in increments]
+                for next_position in next_positions:
                     try:
-                        next_position: Point = curr_position.increment(inc)
-                        if self.map[next_position] - self.map[curr_position] == 1:
-                            if self.map[next_position] == 9:
-                                nines_reachable.append(next_position)
-                            else:
-                                # add to stack
-                                stack.appendleft(next_position)     
+                        step: int = self.map[next_position] - self.map[curr_position]
                     except KeyError:
-                        pass    # off grid
+                        continue    # off grid
+                    
+                    if step == 1:
+                        if self.map[next_position] == 9:
+                            nines_reachable.append(next_position)
+                        else:
+                            # add to stack
+                            stack.appendleft(next_position)     
             
             total_score += len(set(nines_reachable))
             total_rating += len(nines_reachable)
