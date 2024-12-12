@@ -4,8 +4,7 @@ David Hanley, December 2024
 '''
 from dataclasses import dataclass, field
 from typing import Self
-from collections import deque, defaultdict
-from itertools import product
+from collections import deque
 
 @dataclass
 class Point:
@@ -14,9 +13,6 @@ class Point:
     
     def increment(self, increment: tuple[int,int]) -> Self: 
         return Point(self.x+increment[0],self.y+increment[1])
-
-    def __eq__(self,p2) -> bool:
-        return self.x == p2.x and self.y == p2.y
 
     def __hash__(self) -> int:
         return hash((self.x,self.y))  
@@ -42,7 +38,7 @@ class Day12:
             for y in range(self.max_y):
                 self.map[Point(x,y)] = lines[y][x]
     
-    def remove_next_points(self, p: Point, inc: tuple[int,int], direction: tuple[int,int],points: list[Point]) -> Point | None:
+    def remove_side_points(self, p: Point, inc: tuple[int,int], direction: tuple[int,int],points: list[Point]) -> Point | None:
         ''' 
         Removes next point in given direction until no more exists
         '''
@@ -64,7 +60,7 @@ class Day12:
         while len(r.perimeter_points) > 0:
             p, direction_from = r.perimeter_points[0]
             for inc in self.increments:
-                self.remove_next_points(p,direction_from,inc,r.perimeter_points)
+                self.remove_side_points(p,direction_from,inc,r.perimeter_points)
             r.perimeter_points.remove((p,direction_from))
             sides += 1
         return sides
