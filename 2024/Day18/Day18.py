@@ -24,7 +24,7 @@ class Point:
         return hash((self.x,self.y)) 
 
 class Day18:
-    def __init__(self,file_name:str,grid_width: int, grid_height: int,num_bytes: int) -> None:
+    def __init__(self,file_name:str,grid_width: int, grid_height: int) -> None:
         with open(file_name, 'r') as input_file:
             lines = [line.strip('\n') for line in input_file]
         
@@ -32,13 +32,15 @@ class Day18:
         self.grid_width: int = grid_width
         self.grid_height: int = grid_height
         self.byte_coords: list[Point] = [Point(int(byte_strs[0]),int(byte_strs[1])) for byte_strs in [re.findall(r'\d+',line) for line in lines]]
+        self.reset_grid()
+        
+    def reset_grid(self) -> None:
+        '''
+        Sets grid to all empty
+        '''
         for x in range(0,self.grid_width):
             for y in range(self.grid_height):
-                curr_point = Point(x,y)
-                if curr_point in self.byte_coords[0:num_bytes]:
-                    self.grid[Point(x,y)] = '#'
-                else:
-                    self.grid[Point(x,y)] = '.'
+                self.grid[Point(x,y)] = '.'
     
     def draw_grid(self) -> None:
         out_str: str = str()
@@ -48,7 +50,22 @@ class Day18:
             out_str += '\n'
         print(out_str)
            
-    def part1(self) -> int:
+    def part1(self,num_bytes:int) -> int:
+        '''
+        Add first num_bytes byte coords to grid
+        Perform BFS to find shortest path
+        '''
+        for byte_coord in self.byte_coords[0:num_bytes]:
+            self.grid[byte_coord] = '#'
+        
+        return self.bfs()
+    
+    def bfs(self) -> int | None:
+        '''
+        Perform a BFS from (0,0) to (grid_width-1,grid_height-1)
+        If path found, return number of steps
+        Otherwise return None
+        '''
         visited: set[Point] = set()
         q: deque[tuple[Point,int]] = deque()
         q.append((Point(0,0),0))
@@ -68,7 +85,20 @@ class Day18:
                         q.append((next_pos,steps+1))
                 except KeyError:
                     pass
+        
+        # will only get here if solution for part 2 found
+        return None
                 
     def part2(self) -> int:
-        return 0
-                        
+        '''
+        Brute force method
+        Add each byte coord to grid one at a time and see if path to exit found
+        If not return byte_coord
+        '''
+        self.reset_grid()
+        for byte_coord in self.byte_coords:
+            self.grid[byte_coord] = '#'
+            if self.bfs() is None:
+                return byte_coord
+            
+            
