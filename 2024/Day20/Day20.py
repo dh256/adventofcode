@@ -5,13 +5,10 @@ David Hanley, December 2024
 from dataclasses import dataclass
 from typing import Self
 from collections import deque, defaultdict
-
-
 @dataclass 
 class Offset:
     x: int
     y: int
-
 @dataclass
 class Point:
     x: int
@@ -29,7 +26,6 @@ class Point:
         False, otherwise
         '''
         return (self.x >= 0 and self.x < x) and (self.y >= 0 and self.y < y)
-
 class Day20:
     def __init__(self,file_name:str) -> None:
         with open(file_name, 'r') as input_file:
@@ -48,7 +44,7 @@ class Day20:
                 elif lines[y][x] == 'E':
                     self.end: Point = Point(x,y)
                         
-    def bfs(self) -> dict[Point,int]:
+    def shortest_path(self) -> dict[Point,int]:
         '''
         Perform a BFS from start_pos to end_pos across map using given set of walls
         For each point visited will need to track point came from and steps (time) to get there. Needed to retrace shortest path.
@@ -80,58 +76,60 @@ class Day20:
                 if next_point.in_range(self.map_width,self.map_height) and next_point not in self.walls:
                     q.append((next_point,time+1,curr_point))                     
     
-    def valid_cheats(self, curr_point: Point, shortest_path: dict[Point,int], walls_walked: set[Point]) -> list[tuple[int,int]]:
+    def possible_cheat_points(self,start_point:Point,shortest_path: dict[Point,int], cheats: int) -> dict[Point,int]:
         '''
-        Are there walls worth walking through:
-        Yes, if one (or more) of following patterns met and wall not already walked through: 
-            
-            .#.
-            
-        or 
-        
-            .
-            #
-            .
-            
-        where # is a wall and . is a point on shortest path
-                
+        Starting at curr_point, find all possible points "cheats" steps from curr_point
+        A possible point must be on the existing shortest_path and can only be considered once
+        Return possible point with steps to get to that point
+        Uses BFS
         '''
-        cheats: list[tuple[int,int]] = list()
-        for offset in self.offsets:
-            poss_wall_point: Point = curr_point.increment(offset)
-            poss_path_point: Point = curr_point.increment(Offset(offset.x*2,offset.y*2))
-            if poss_wall_point in self.walls and poss_path_point in shortest_path.keys():
-                if poss_wall_point not in walls_walked:
-                    time_saved: int = shortest_path[poss_path_point] - shortest_path[curr_point] - 2
-                    if time_saved > 0:
-                        cheats.append((time_saved,poss_wall_point))
-        return cheats
+        q: deque[tuple[Point,int]] = deque()
+        visited: set[Point] = set()
+        q.append((start_point,0))
+        possible_points: dict[Point,int] = dict()
+        while len(q) > 0:
+            curr_point, steps = q.popleft()
             
-    def part1(self) -> int:
-        reduced_time_count: int = 0
-        shortest_path: dict[Point,int] = self.bfs()
-        
-        # debugging
-        times_saved: dict[int,int] = defaultdict(int)
-        
-        # Holds walls already walked through
-        walls_walked: set[Point] = set()
-        for curr_point in list(shortest_path.keys())[::-1]:
-            for cheat in self.valid_cheats(curr_point,shortest_path, walls_walked):
-                time_saved, wall_walked = cheat
-                walls_walked.add(wall_walked)
+            if curr_point in visited:
+                continue
+            
+            visited.add(curr_point)
+            
+            # is it a possible point
+            if curr_point != start_point and curr_point in shortest_path and curr_point not in possible_points.keys():
+                possible_points[curr_point] = steps
                 
-                # debugging
-                times_saved[time_saved] += 1
+            if steps == cheats:
+                continue
                 
-                if time_saved >= 100:           # need to change this for actual input
-                    reduced_time_count += 1
+            # move to next point
+            for offset in self.offsets:
+                next_point = curr_point.increment(offset)
+                if next_point.in_range(self.map_width,self.map_height):
+                    q.append((next_point,steps+1)) 
+        
+        return possible_points
     
-        for k,v in sorted(times_saved.items(), key=lambda i: i[0]):
-            print(f'There are {v} cheats that save {k} picseconds')
-            
-        return reduced_time_count
+    def valid_cheats(self, start_point: Point, shortest_path: dict[Point,int], cheats: int) -> list[tuple[int,int]]:
+        possible_points: dict[Point,int] = self.possible_cheat_points(start_point,shortest_path,cheats) 
         
-    def part2(self) -> int:
-        return 0
+        # process possible points from BFS above 
+        cheats: list[tuple[int,int]] = list()
+        for possible_point,steps in possible_points.items():
+            time_saved: int = shortest_path[possible_point] - shortest_path[start_point] - steps
+            if time_saved > 0:
+                cheats.append(time_saved)
+        return cheats
+     
+    def solution(self,save_at_least: int) -> list[int]:
+        shortest_path: dict[Point,int] = self.shortest_path()
+        
+        solutions: list[int] = list() 
+        for cheat_length in [2,20]: 
+            times_saved: dict[int,int] = defaultdict(int)
+            for curr_point in list(shortest_path.keys())[::-1]:
+                for cheat in self.valid_cheats(curr_point,shortest_path,cheat_length):
+                    times_saved[cheat] += 1
+            solutions.append(sum([v for k, v in times_saved.items() if k >= save_at_least]))
+        return solutions    
                         

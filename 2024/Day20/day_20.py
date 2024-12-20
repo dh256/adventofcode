@@ -1,4 +1,3 @@
- 
 ''' 
 David Hanley, December 2024
             
@@ -17,20 +16,21 @@ What do we need:
 With this can walk through walls but only if they are adjacent to two points on shortest path
 After removal, can work out distance save by subtracting time from point on one side of wall from the other.
 
-This avoids the need to do repeated BFS.
-                
+For part 2, initially changed Part 1 to do a BFS for all possible points a maximim of 2 steps from current point (repeat for all points on shortest path)
+Then, changed 2 to 20 for Part 2 and it worked. A bit slow and could do with some optimisation. Definitelty checking too many points.
+               
 '''
 from Day20 import Day20
 from time import time
       
                             
 def main():
-    #d = Day20('tests/test1.txt')
-    d = Day20('input.txt')
     start_time = time()
-    print(f'Part 1: {d.part1()}; Excution Time: {(time()-start_time):.3f} s')
-    #start_time = time()
-    #print(f'Part 2: {d.part2()}; Excution Time: {(time()-start_time):.3f} s')
+    d = Day20('input.txt')
+    p1, p2 = d.solution(100)
+    print(f'Part 1: {p1}')
+    print(f'Part 2: {p2}') 
+    print(f'Excution Time: {(time()-start_time):.3f} s')
 
 if __name__ == '__main__':
     main()
