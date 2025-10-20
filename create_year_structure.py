@@ -5,6 +5,10 @@ import json
 def create_class(day: int) -> None:
     with open(f'Day{day}.py', 'w') as day_file:
         day_file.write(f"""
+# add parent directory to path for imports
+import sys
+sys.path.insert(0,'..')
+
 class Day{day}:
     def __init__(self,file_name:str) -> None:
         with open(file_name, 'r') as input_file:
@@ -30,18 +34,19 @@ import pytest
 from Day{day} import Day{day}
 
 test_data1=[('tests/input.txt',0)]
-test_data2=[('tests/input.txt',0)]
+#test_data2=[('tests/input.txt',0)]
                   
 @pytest.mark.parametrize('file_name,result',test_data1)
 def test_part1(file_name,result):
     d = Day{day}(file_name)
     assert(d.part1() == result)
 
+'''
 @pytest.mark.parametrize('file_name,result',test_data2)
 def test_part2(file_name,result):
     d = Day{day}(file_name)
     assert(d.part2() == result)
-
+'''
 """)
         
     with open(f'input.txt','w') as _:
@@ -94,6 +99,7 @@ def main():
     # build directory structure
     os.makedirs(f'{year}')
     os.chdir(f'{year}')
+    os.makedirs(f'Common')
     for day in range(1,days+1):
         # main Python file and input.txt file
         os.makedirs(f'Day{day}')
