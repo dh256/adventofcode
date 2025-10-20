@@ -2,8 +2,8 @@
 import pytest
 from Day16 import Day16
 
-test_data1=[('tests/input.txt',0)]
-#test_data2=[('tests/input.txt',0)]
+test_data1=[('2025/Day16/tests/input.txt',0)]
+#test_data2=[('2025/Day16/tests/input.txt',0)]
                   
 @pytest.mark.parametrize('file_name,result',test_data1)
 def test_part1(file_name,result):

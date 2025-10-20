@@ -22,7 +22,7 @@ class Day{day}:
                         
 """)
 
-def create_tests(day: int) -> None:
+def create_tests(day: int, year: int) -> None:
     os.chdir('..')
     os.makedirs(f'tests')
     os.chdir('tests')
@@ -33,8 +33,8 @@ def create_tests(day: int) -> None:
 import pytest
 from Day{day} import Day{day}
 
-test_data1=[('tests/input.txt',0)]
-#test_data2=[('tests/input.txt',0)]
+test_data1=[('{year}/Day{day}/tests/input.txt',0)]
+#test_data2=[('{year}/Day{day}/tests/input.txt',0)]
                   
 @pytest.mark.parametrize('file_name,result',test_data1)
 def test_part1(file_name,result):
@@ -73,13 +73,13 @@ def create_vscode(day: int) -> None:
     with open('launch.json', 'w') as json_file:
         json.dump(launch_json, json_file)
 
-def create_main_file(day: int) -> None:
+def create_main_file(day: int, year: int) -> None:
     with open(f'day_{day}.py','w') as main_file:
         main_file.write(f""" 
 from Day{day} import Day{day}
                             
 def main():
-    d = Day{day}('tests/input.txt')
+    d = Day{day}('{year}/Day{day}/tests/input.txt')
     print(f'Part 1: {{d.part1()}}')
     #print(f'Part 2: {{d.part2()}}')
 
@@ -110,7 +110,7 @@ def main():
             pass
 
         # create main file
-        create_main_file(day)
+        create_main_file(day, year)
 
         # create class
         create_class(day)
@@ -119,7 +119,7 @@ def main():
         create_vscode(day)
 
         # create tests
-        create_tests(day)
+        create_tests(day, year)
 
         os.chdir('../..')
 

@@ -2,7 +2,7 @@
 from Day24 import Day24
                             
 def main():
-    d = Day24('tests/input.txt')
+    d = Day24('2025/Day24/tests/input.txt')
     print(f'Part 1: {d.part1()}')
     #print(f'Part 2: {d.part2()}')
 

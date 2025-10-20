@@ -1,1 +1,1 @@
-Common fucntions for 2025
+Common classes/functions for AoC 2025
