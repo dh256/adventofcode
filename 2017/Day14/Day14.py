@@ -1,7 +1,10 @@
+from Point import Point
+from collections import deque
 class Day14:
 
     def __init__(self, key: str) -> None:
         self._key = key
+        self._squares: set[Point] = set()
     
     def sparse(self,lengths: list[int]) -> list[int]:
         curr_pos: int = 0
@@ -49,13 +52,34 @@ class Day14:
     
     def part1(self) -> int:
         grid: list[str] = [f'{int(self.knot_hash(self._key + '-' + f'{row}'),16):0>128b}' for row in range(128)]
-        squares: int = 0
-        for row in grid:
-            for c in row:
-                if c == '1':
-                    squares += 1
         
-        return squares
+        # create a set of all points in grid with a square
+        # this will help with Part 2
+        for x in range(128):
+            for y in range(128):
+                if grid[y][x] == '1':
+                    self._squares.add(Point(x,y))
+        
+        return len(self._squares)
         
     def part2(self) -> int:
-        pass
+        regions: int = 0
+        
+        while len(self._squares) > 0:
+            '''
+            Take any square from remaining squares
+            Do a BFS of all neighbours until no neighbours remain, removing any squares visited from available squares
+            When BFS completes region done
+            Repeat until no squares remain
+            '''
+            stack: deque[Point] = deque()
+            stack.appendleft(self._squares.pop())
+            while len(stack) > 0:
+                next_square: Point = stack.popleft()
+                for n in next_square.neighbours():
+                    if n in self._squares:
+                        stack.appendleft(n) 
+                        self._squares.discard(n)
+            regions += 1
+        
+        return regions
