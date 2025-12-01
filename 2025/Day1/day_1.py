@@ -2,9 +2,10 @@
 from Day1 import Day1
                             
 def main():
-    d = Day1('2025/Day1/tests/input.txt')
-    print(f'Part 1: {d.part1()}')
-    #print(f'Part 2: {d.part2()}')
+    d = Day1('input.txt')
+    result = d.part1and2()
+    print(f'Part 1: {result[0]}')
+    print(f'Part 2: {result[1]}')
 
 if __name__ == '__main__':
     main()
