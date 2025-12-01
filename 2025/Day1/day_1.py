@@ -3,7 +3,7 @@ from Day1 import Day1
                             
 def main():
     d = Day1('input.txt')
-    result = d.part1and2()
+    result = d.parts1and2()
     print(f'Part 1: {result[0]}')
     print(f'Part 2: {result[1]}')
 
