@@ -2,17 +2,10 @@
 import pytest
 from Day2 import Day2
 
-test_data1=[('2025/Day2/tests/input.txt',0)]
-#test_data2=[('2025/Day2/tests/input.txt',0)]
+test_data1=[('tests/input.txt',1227775554,4174379265)]
                   
-@pytest.mark.parametrize('file_name,result',test_data1)
-def test_part1(file_name,result):
+@pytest.mark.parametrize('file_name,result1,result2',test_data1)
+def test_parts1and2(file_name,result1,result2):
     d = Day2(file_name)
-    assert(d.part1() == result)
+    assert(d.parts1and2() == (result1, result2))
 
-'''
-@pytest.mark.parametrize('file_name,result',test_data2)
-def test_part2(file_name,result):
-    d = Day2(file_name)
-    assert(d.part2() == result)
-'''
