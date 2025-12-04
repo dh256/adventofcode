@@ -17,36 +17,34 @@ class Point:
 class Day4:
     def __init__(self,file_name:str) -> None:
         with open(file_name, 'r') as input_file:
-            rows = [line.strip('\n') for line in input_file]
+            rows: list[str] = [line.strip('\n') for line in input_file]
             
         # build grid
-        self._max_x: int = len(rows[0])
-        self._max_y: int = len(rows)
-        self._grid: dict[Point, str] = {Point(x,y): rows[y][x] for x in range(self._max_x) for y in range(self._max_y)}    
+        self._grid: dict[Point, str] = {Point(x,y): rows[y][x] for x in range(len(rows[0])) for y in range(len(rows))}    
+        
+        # create offsets
+        self._offsets: list[Point] = [Point(x,y) for x in range(-1,2) for y in range(-1,2) if Point(x,y) != Point(0,0)]
         
     
     def get_accessible_rolls(self) -> list[Point]:
-        # create offsets
-        offsets: list[Point] = [Point(x,y) for x in range(-1,2) for y in range(-1,2) if Point(x,y) != Point(0,0)]
-        
-        # count accessible rolls
-        accessible_rolls: list[Point] = list()
+        # get location of all accessible rolls
+        accessible_rolls: set[Point] = set()
         for curr_point in self._grid.keys():
             if self._grid[curr_point] == '@':
-                rolls: int = 0    
-                for offset in offsets:
+                adjacent_rolls: int = 0    
+                for offset in self._offsets:
                     try:
                         if self._grid[curr_point + offset] == '@':
-                            rolls += 1
-                        
-                        # more than 3, roll not accessible
-                        if rolls > 3:
-                            break
+                            adjacent_rolls += 1
                     except KeyError:
                         # off grid, ignore
                         pass
+                        
+                    # more than 3, roll not accessible
+                    if adjacent_rolls > 3:
+                        break 
                 else:
-                    accessible_rolls.append(curr_point)
+                    accessible_rolls.add(curr_point)
         
         return accessible_rolls
             
@@ -60,8 +58,10 @@ class Day4:
             if len(accessibe_rolls) == 0:
                 return rolls_removed
             else:
+                # count and remove accessible rolls
+                rolls_removed += len(accessibe_rolls)
                 for accessible_roll in accessibe_rolls:
                     self._grid.pop(accessible_roll)
-                rolls_removed += len(accessibe_rolls)
+                
     
                         
