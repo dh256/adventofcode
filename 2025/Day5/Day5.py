@@ -1,9 +1,32 @@
+from dataclasses import dataclass
+
+@dataclass
+class InclusiveRange:
+    start: int
+    stop: int
+    
+    def includes_value(self, value: int) -> bool:
+        return value >= self.start and value <= self.stop
+    
+    def contains(self, r: InclusiveRange) -> bool:
+        return r.start >= self.start and r.stop <= self.stop
+    
+    def supercedes(self, r: InclusiveRange) -> bool:
+        return self.start > r.stop
+    
+    def overlaps_end(self, r: InclusiveRange) -> bool:
+        return self.start >= r.start and self.start <= r.stop and self.stop > r.stop
+    
+    @property
+    def size(self) -> int:
+        return (self.stop-self.start)+1
+
 class Day5:
     def __init__(self,file_name:str) -> None:
         with open(file_name, 'r') as input_file:
             lines = [line.strip('\n') for line in input_file]
         
-        self._ranges: list[range] = list()
+        self._ranges: list[InclusiveRange] = list()
         self._ingredients: list[int] = list()
         
         ranges: bool = True
@@ -14,7 +37,7 @@ class Day5:
             
             if ranges:
                 start, end = map(lambda p: int(p),line.split('-'))
-                self._ranges.append(range(start,end))
+                self._ranges.append(InclusiveRange(start,end))
             else:
                 self._ingredients.append(int(line))
         
@@ -26,30 +49,25 @@ class Day5:
         fresh: int = 0
         for ingredient in self._ingredients:
             for curr_range in self._ranges:
-                if ingredient >= curr_range.start and ingredient <= curr_range.stop:
+                if curr_range.includes_value(ingredient):
                    fresh += 1 
                    break
         return fresh
 
     def part2(self) -> int:
-        # create a list of all valid non-overlapping ranges and populate with initial range
-        valid_ranges: list[range] = [self._ranges[0]]
-        for curr_range in self._ranges[1:]:
-            # curr_range is wholly contained within last valid range continue
-            if curr_range.start >= valid_ranges[-1].start and curr_range.stop <= valid_ranges[-1].stop:
-                continue
+        total_fresh: int = 0
+        curr_range: InclusiveRange = self._ranges[0]
+        for next_range in self._ranges[1:]:
+            # next_range supercedes curr_range
+            if next_range.supercedes(curr_range):
+                total_fresh += curr_range.size
+                curr_range = next_range
             
-            # curr_range start is after last valid range
-            if curr_range.start > valid_ranges[-1].stop:
-                # add curr_range to valid range
-                valid_ranges.append(curr_range)
-            # curr range starts in last valid range but stops beyond it
-            else:
-                # extend last valid range
-                valid_ranges[-1] = range(valid_ranges[-1].start,curr_range.stop)
+            # next_range overlaps end of curr_range
+            elif next_range.overlaps_end(curr_range):
+                # extend curr_range
+                curr_range.stop = next_range.stop
                 
-        # once we have all valid ranges, sum the size of all the ranges
-        return sum(map(lambda r: (r.stop - r.start) + 1, valid_ranges))
-        
-                  
-                        
+        # finally add curr_range size and return result
+        return total_fresh + curr_range.size
+    
