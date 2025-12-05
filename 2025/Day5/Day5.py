@@ -17,6 +17,9 @@ class Day5:
                 self._ranges.append(range(start,end))
             else:
                 self._ingredients.append(int(line))
+        
+        # sort ranges by start value (needed for Part 2)
+        self._ranges = sorted(self._ranges, key=lambda r: r.start)
             
     def part1(self) -> int:
         # count fresh ingredients
@@ -29,17 +32,15 @@ class Day5:
         return fresh
 
     def part2(self) -> int:
-        # sort range by start value
-        self._ranges = sorted(self._ranges, key=lambda r: r.start)
-        
         # create a list of all valid non-overlapping ranges and populate with initial range
         valid_ranges: list[range] = [self._ranges[0]]
         for curr_range in self._ranges[1:]:
-            # curr_range is wholly contained within last valid range
+            # curr_range is wholly contained within last valid range continue
             if curr_range.start >= valid_ranges[-1].start and curr_range.stop <= valid_ranges[-1].stop:
                 continue
+            
             # curr_range start is after last valid range
-            elif curr_range.start > valid_ranges[-1].stop:
+            if curr_range.start > valid_ranges[-1].stop:
                 # add curr_range to valid range
                 valid_ranges.append(curr_range)
             # curr range starts in last valid range but stops beyond it
