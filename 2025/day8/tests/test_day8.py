@@ -1,18 +1,13 @@
 
 import pytest
-from Day8 import Day8
+from day8 import Day8
+import os
 
-test_data1=[('2025/Day8/tests/input.txt',0)]
-#test_data2=[('2025/Day8/tests/input.txt',0)]
+test_data=[(os.path.dirname(__file__) + '/input.txt',10,40,25272)]
                   
-@pytest.mark.parametrize('file_name,result',test_data1)
-def test_part1(file_name,result):
+@pytest.mark.parametrize('file_name,pairs,part1,part2',test_data)
+def test_part1(file_name,pairs,part1,part2):
     d = Day8(file_name)
-    assert(d.part1() == result)
+    result = d.parts1and2(pairs)
+    assert(result == (part1, part2))
 
-'''
-@pytest.mark.parametrize('file_name,result',test_data2)
-def test_part2(file_name,result):
-    d = Day8(file_name)
-    assert(d.part2() == result)
-'''
