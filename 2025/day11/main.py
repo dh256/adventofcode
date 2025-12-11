@@ -1,0 +1,12 @@
+import os
+from day11 import Day11
+                            
+def main():
+    file_name: str = os.path.dirname(__file__) + '/input.txt'
+    d = Day11(file_name)
+    print(f'Part 1: {d.part1()}')
+    print(f'Part 2: {d.part2()}')
+
+if __name__ == '__main__':
+    main()
+            
