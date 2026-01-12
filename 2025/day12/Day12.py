@@ -37,7 +37,7 @@ class Day12:
         # regions
         self.regions: list[Region] = list()
         for line in parts[6].split('\n'):
-            width, height, *indexes = map(lambda n: int(n), re.findall('\d+',line))
+            width, height, *indexes = map(lambda n: int(n), re.findall('\\d+',line))
             self.regions.append(Region(width,height,indexes)) 
             
     def part1(self) -> int:
