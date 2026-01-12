@@ -115,11 +115,15 @@ dmypy.json
 # Ignore all local history of files
 .history
 
-bin/
+# Virtual environments / uv
+.venv/
 venv/
+bin/
 lib/
-share/
-pyvenv.cfg
+scripts/
 
+
+# advent of code
+input.txt
 
 # End of https://www.gitignore.io/api/python,visualstudiocode
